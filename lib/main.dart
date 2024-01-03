@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Echo Note',
+      title: 'EchoNote',
       theme: ThemeData(
         brightness: Brightness.light,
         useMaterial3: true,

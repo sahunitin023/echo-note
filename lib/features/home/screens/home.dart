@@ -1,3 +1,5 @@
+import 'package:echo_note/features/add_note/screens/text_to_speech_screen.dart';
+import 'package:echo_note/features/home/screens/notes_screen.dart';
 import 'package:echo_note/utility/constants.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,12 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   List<String> appBarTitle = ['All Notes', 'Favourite Notes'];
-  List<Widget> screens = [Container(), Container()];
+  List<Widget> screens = [
+    NotesScreen(),
+    NotesScreen(
+      isFavouriteScreen: true,
+    )
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +28,9 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         centerTitle: true,
-        // forceMaterialTransparency: true,
         title: Text(
           appBarTitle[_selectedIndex],
-          style: TextStyle(
-            fontSize: 20,
-            color: AppColors.primary,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         backgroundColor: AppColors.secondary,
       ),
@@ -77,7 +79,13 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: FloatingActionButton(
         // shape: const CircleBorder(),
         elevation: 10,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const TextToSpeechScreen(),
+            ),
+          );
+        },
         splashColor: AppColors.subTitle,
         backgroundColor: AppColors.iconBackground,
         child: Icon(
