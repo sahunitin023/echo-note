@@ -16,8 +16,8 @@ class _HomePageState extends State<HomePage> {
 
   List<String> appBarTitle = ['All Notes', 'Favourite Notes'];
   List<Widget> screens = [
-    NotesScreen(),
-    NotesScreen(
+    const NotesScreen(),
+    const NotesScreen(
       isFavouriteScreen: true,
     )
   ];
