@@ -5,6 +5,14 @@ sealed class HomeEvent {}
 
 class HomeInitialEvent extends HomeEvent {}
 
-class HomeNoteFavouritedEvent extends HomeEvent {}
+class HomeNoteFavouritedEvent extends HomeEvent {
+  final NoteModel note;
 
-class HomeSearchEvent extends HomeEvent {}
+  HomeNoteFavouritedEvent({required this.note});
+}
+
+class HomeSearchEvent extends HomeEvent {
+  final String title;
+
+  HomeSearchEvent({required this.title});
+}

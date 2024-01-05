@@ -5,8 +5,6 @@ sealed class HomeState {}
 
 final class HomeInitial extends HomeState {}
 
-class HomeLoadingState extends HomeState {}
-
 class HomeSuccessState extends HomeState {
   final List<NoteModel> notes;
 
