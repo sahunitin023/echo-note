@@ -1,4 +1,5 @@
 import 'package:echo_note/features/add_note/screens/text_to_speech_screen.dart';
+import 'package:echo_note/features/home/bloc/home_bloc.dart';
 import 'package:echo_note/features/home/screens/notes_screen.dart';
 import 'package:echo_note/utility/constants.dart';
 import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
@@ -13,17 +14,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final homeBloc = HomeBloc();
 
   List<String> appBarTitle = ['All Notes', 'Favourite Notes'];
-  List<Widget> screens = [
-    const NotesScreen(),
-    const NotesScreen(
-      isFavouriteScreen: true,
-    )
-  ];
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> screens = [
+      NotesScreen(
+        homeBloc: homeBloc,
+      ),
+      NotesScreen(
+        homeBloc: homeBloc,
+        isFavouriteScreen: true,
+      )
+    ];
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -82,7 +87,9 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => const TextToSpeechScreen(),
+              builder: (context) => TextToSpeechScreen(
+                homeBloc: homeBloc,
+              ),
             ),
           );
         },

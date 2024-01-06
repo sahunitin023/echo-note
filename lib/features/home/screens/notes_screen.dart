@@ -7,17 +7,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotesScreen extends StatefulWidget {
   final bool isFavouriteScreen;
-  const NotesScreen({super.key, this.isFavouriteScreen = false});
+  final HomeBloc homeBloc;
+  const NotesScreen(
+      {super.key, this.isFavouriteScreen = false, required this.homeBloc});
 
   @override
   State<NotesScreen> createState() => _NotesScreenState();
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  final HomeBloc homeBloc = HomeBloc();
   @override
   void initState() {
-    homeBloc.add(HomeInitialEvent());
+    widget.homeBloc.add(HomeInitialEvent());
     super.initState();
   }
 
@@ -54,9 +55,9 @@ class _NotesScreenState extends State<NotesScreen> {
               onChanged: (title) {
                 bool isEmpty = title.trim().isEmpty;
                 if (isEmpty) {
-                  homeBloc.add(HomeInitialEvent());
+                  widget.homeBloc.add(HomeInitialEvent());
                 } else {
-                  homeBloc.add(HomeSearchEvent(title: title));
+                  widget.homeBloc.add(HomeSearchEvent(title: title));
                 }
               },
             ),
@@ -65,8 +66,7 @@ class _NotesScreenState extends State<NotesScreen> {
         //ListView of NotesItems
         Expanded(
           child: BlocBuilder(
-            buildWhen: (previous, current) => current is HomeSuccessState,
-            bloc: homeBloc,
+            bloc: widget.homeBloc,
             builder: (context, state) {
               if (state is HomeSuccessState) {
                 List<NoteModel> allNotes = state.notes;
@@ -83,7 +83,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       itemCount: allNotes.length,
                       itemBuilder: (context, index) {
                         return NotesItemWidget(
-                            note: allNotes[index], homeBloc: homeBloc);
+                            note: allNotes[index], homeBloc: widget.homeBloc);
                       });
                   //For Favourite Notes
                 } else {
@@ -96,7 +96,8 @@ class _NotesScreenState extends State<NotesScreen> {
                     itemCount: favouriteNotes.length,
                     itemBuilder: (context, index) {
                       return NotesItemWidget(
-                          note: favouriteNotes[index], homeBloc: homeBloc);
+                          note: favouriteNotes[index],
+                          homeBloc: widget.homeBloc);
                     },
                   );
                 }

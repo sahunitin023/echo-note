@@ -1,12 +1,15 @@
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:echo_note/features/home/bloc/home_bloc.dart';
+import 'package:echo_note/models/note_model.dart';
 import 'package:echo_note/utility/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class TextToSpeechScreen extends StatefulWidget {
   static const routeName = '/text-to-speech-screen';
+  final HomeBloc homeBloc;
 
-  const TextToSpeechScreen({super.key});
+  const TextToSpeechScreen({super.key, required this.homeBloc});
   @override
   State<TextToSpeechScreen> createState() => _TextToSpeechScreenState();
 }
@@ -48,36 +51,6 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
     });
   }
 
-  final OutlineInputBorder _border = OutlineInputBorder(
-    borderSide: BorderSide(color: AppColors.primary),
-    borderRadius: const BorderRadius.all(Radius.circular(15)),
-  );
-
-  Widget customText({
-    required String label,
-    required Color color,
-    required double size,
-  }) {
-    return Text(
-      label,
-      style: TextStyle(
-        color: color,
-        fontWeight: FontWeight.w500,
-        fontSize: size,
-      ),
-    );
-  }
-
-  Widget customContainer({required Widget child}) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        color: Colors.white,
-      ),
-      child: child,
-    );
-  }
-
   // @override
 
   // void showDialogMessage() {
@@ -98,20 +71,18 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
   //   );
   // }
 
-  // void _saveAndClose() {
-  //   if (_titleController.text.trim().isEmpty ||
-  //       _descriptionController.text.trim().isEmpty) {
-  //     return;
-  //   }
-
-  //   if (!mounted) {
-  //     return; // Check if the widget is still mounted before continuing
-  //   }
-
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  // }
+  void saveAndClose() {
+    if (_titleController.text.trim().isNotEmpty &&
+        _descriptionController.text.trim().isNotEmpty) {
+      NoteModel note = NoteModel(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        dateTime: DateTime.now(),
+      );
+      widget.homeBloc.add(HomeAddNoteSavedEvent(note: note));
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +100,7 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
         backgroundColor: AppColors.secondary,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: saveAndClose,
             icon: Image.asset(
               'assets/icons/save_icon.png',
               height: 20,
@@ -254,4 +225,34 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
           : null,
     );
   }
+
+  Widget customText({
+    required String label,
+    required Color color,
+    required double size,
+  }) {
+    return Text(
+      label,
+      style: TextStyle(
+        color: color,
+        fontWeight: FontWeight.w500,
+        fontSize: size,
+      ),
+    );
+  }
+
+  Widget customContainer({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Colors.white,
+      ),
+      child: child,
+    );
+  }
+
+  final OutlineInputBorder _border = OutlineInputBorder(
+    borderSide: BorderSide(color: AppColors.primary),
+    borderRadius: const BorderRadius.all(Radius.circular(15)),
+  );
 }

@@ -16,3 +16,9 @@ class HomeSearchEvent extends HomeEvent {
 
   HomeSearchEvent({required this.title});
 }
+
+class HomeAddNoteSavedEvent extends HomeEvent {
+  final NoteModel note;
+
+  HomeAddNoteSavedEvent({required this.note});
+}
