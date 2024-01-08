@@ -1,4 +1,4 @@
-import 'package:echo_note/features/add_note/screens/text_to_speech_screen.dart';
+import 'package:echo_note/features/home/screens/text_to_speech_screen.dart';
 import 'package:echo_note/features/home/bloc/home_bloc.dart';
 import 'package:echo_note/features/home/screens/notes_screen.dart';
 import 'package:echo_note/utility/constants.dart';
