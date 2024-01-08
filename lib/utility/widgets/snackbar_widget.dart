@@ -1,3 +1,4 @@
+import 'package:echo_note/utility/constants.dart';
 import 'package:flutter/material.dart';
 
 class SnackBarWidget {
@@ -15,15 +16,15 @@ class SnackBarWidget {
       SnackBar(
         content: Text(
           label,
-          style: Theme.of(context).textTheme.titleMedium,
+          style: Theme.of(context).textTheme.labelLarge,
         ),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
         action: SnackBarAction(
           label: 'Okay!',
-          textColor: Colors.grey,
+          textColor: AppColors.primary,
           onPressed: () {
             hide.hideCurrentSnackBar();
           },

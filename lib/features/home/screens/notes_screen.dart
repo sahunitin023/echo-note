@@ -29,37 +29,43 @@ class _NotesScreenState extends State<NotesScreen> {
         //Search Bar
         Padding(
           padding: const EdgeInsets.all(30),
-          child: Container(
-            decoration: BoxDecoration(
+          child: Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50),
-              color: Colors.white,
             ),
-            child: TextField(
-              style: Theme.of(context).textTheme.labelMedium,
-              decoration: InputDecoration(
-                labelText: 'Search',
-                prefixIcon: Image.asset(
-                  'assets/icons/search.png',
-                  scale: 23,
-                  color: AppColors.primary,
-                ),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(50),
-                    borderSide: BorderSide(color: AppColors.primary)),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50),
-                  borderSide: BorderSide(color: AppColors.primary),
-                ),
-                constraints: const BoxConstraints(maxHeight: 50),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(50),
+                color: Colors.white,
               ),
-              onChanged: (title) {
-                bool isEmpty = title.trim().isEmpty;
-                if (isEmpty) {
-                  widget.homeBloc.add(HomeInitialEvent());
-                } else {
-                  widget.homeBloc.add(HomeSearchEvent(title: title));
-                }
-              },
+              child: TextField(
+                style: Theme.of(context).textTheme.labelMedium,
+                decoration: InputDecoration(
+                  labelText: 'Search',
+                  prefixIcon: Image.asset(
+                    'assets/icons/search.png',
+                    scale: 23,
+                    color: AppColors.primary,
+                  ),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(50),
+                      borderSide: BorderSide(color: AppColors.primary)),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(50),
+                    borderSide: BorderSide(color: AppColors.primary),
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 50),
+                ),
+                onChanged: (title) {
+                  bool isEmpty = title.trim().isEmpty;
+                  if (isEmpty) {
+                    widget.homeBloc.add(HomeInitialEvent());
+                  } else {
+                    widget.homeBloc.add(HomeSearchEvent(title: title));
+                  }
+                },
+              ),
             ),
           ),
         ),

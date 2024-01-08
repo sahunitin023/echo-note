@@ -1,6 +1,7 @@
 import 'package:echo_note/features/home/bloc/home_bloc.dart';
-import 'package:echo_note/features/notes_info/screens/notes_info_screen.dart';
+import 'package:echo_note/features/home/screens/notes_info_screen.dart';
 import 'package:echo_note/models/note_model.dart';
+import 'package:echo_note/utility/widgets/snackbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +21,7 @@ class _NotesItemWidgetState extends State<NotesItemWidget> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Card(
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -50,6 +52,13 @@ class _NotesItemWidgetState extends State<NotesItemWidget> {
           trailing: IconButton(
             onPressed: () {
               widget.homeBloc.add(HomeNoteFavouritedEvent(note: widget.note));
+              SnackBarWidget(
+                context: context,
+                label: widget.note.isFavourite
+                    ? 'Note removed from favorites'
+                    : 'Note added to favorite',
+                color: Colors.grey[200]!,
+              ).show();
             },
             icon: Icon(
               widget.note.isFavourite ? Icons.favorite : Icons.favorite_border,
@@ -60,6 +69,7 @@ class _NotesItemWidgetState extends State<NotesItemWidget> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => NotesInfoScreen(
+                  homeBloc: widget.homeBloc,
                   note: widget.note,
                 ),
               ),

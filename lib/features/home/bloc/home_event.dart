@@ -22,3 +22,9 @@ class HomeAddNoteSavedEvent extends HomeEvent {
 
   HomeAddNoteSavedEvent({required this.note});
 }
+
+class HomeNoteDeleteEvent extends HomeEvent {
+  final NoteModel note;
+
+  HomeNoteDeleteEvent({required this.note});
+}

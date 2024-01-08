@@ -55,10 +55,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       // box.close();
     });
 
+    //Add New Note
     on<HomeAddNoteSavedEvent>((event, emit) {
       try {
         var notes = box.get('notes', defaultValue: []);
-        // notes.cast<NoteModel>();
         notes.add(event.note);
         box.put('notes', notes);
         emit(HomeSuccessState(notes: notes.cast<NoteModel>()));
@@ -66,6 +66,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(HomeErrorState());
       }
       // box.close();
+    });
+
+    //Deletes the note
+    on<HomeNoteDeleteEvent>((event, emit) {
+      try {
+        var notes = box.get('notes', defaultValue: []);
+        notes.remove(event.note);
+        box.put('notes', notes);
+        emit(HomeSuccessState(notes: notes.cast<NoteModel>()));
+      } catch (e) {
+        print(e);
+        emit(HomeErrorState());
+      }
     });
   }
 }

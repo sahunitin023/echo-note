@@ -75,6 +75,8 @@ flutter:
     - assets/icons/favourite_icon_off.png
     - assets/icons/save_icon.png
     - assets/icons/search.png
+    - assets/icons/trash.png
+    - assets/icons/edit.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
