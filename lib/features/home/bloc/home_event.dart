@@ -28,3 +28,10 @@ class HomeNoteDeleteEvent extends HomeEvent {
 
   HomeNoteDeleteEvent({required this.note});
 }
+
+class HomeNoteUpdateEvent extends HomeEvent {
+  final NoteModel oldNote;
+  final NoteModel newNote;
+
+  HomeNoteUpdateEvent({required this.oldNote, required this.newNote});
+}

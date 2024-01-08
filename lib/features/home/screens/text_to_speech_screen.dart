@@ -2,14 +2,17 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:echo_note/features/home/bloc/home_bloc.dart';
 import 'package:echo_note/models/note_model.dart';
 import 'package:echo_note/utility/constants.dart';
+import 'package:echo_note/utility/widgets/snackbar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class TextToSpeechScreen extends StatefulWidget {
   static const routeName = '/text-to-speech-screen';
   final HomeBloc homeBloc;
+  final bool isUpdateScreen;
 
-  const TextToSpeechScreen({super.key, required this.homeBloc});
+  const TextToSpeechScreen(
+      {super.key, required this.homeBloc, this.isUpdateScreen = false});
   @override
   State<TextToSpeechScreen> createState() => _TextToSpeechScreenState();
 }
@@ -20,10 +23,7 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   bool _enableTyping = false;
-  // bool _didChange = true;
-  bool _isLoading = false;
-  // bool _isFavourite = false;
-  // String _id = '';
+  bool _didChange = true;
 
   void _startListening() async {
     if (!_speechEnabled) {
@@ -32,6 +32,7 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
         setState(() {
           _speechEnabled = true;
           _speechToText.listen(
+            partialResults: true,
             cancelOnError: true,
             onResult: (result) {
               setState(() {
@@ -51,36 +52,57 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
     });
   }
 
-  // @override
+  @override
+  void didChangeDependencies() {
+    if (_didChange) {
+      final info = ModalRoute.of(context)?.settings.arguments;
+      if (info != null) {
+        final infoMap = info as NoteModel;
+        _titleController.text = infoMap.title;
+        _descriptionController.text = infoMap.description;
+      }
+      _didChange = false;
+    }
+    super.didChangeDependencies();
+  }
 
-  // void showDialogMessage() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: const Text('An error Occured!'),
-  //         content: const Text('Something went wrong!'),
-  //         actions: [
-  //           ElevatedButton(
-  //             onPressed: () => Navigator.of(context).pop(),
-  //             child: const Text('Okay!'),
-  //           )
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _speechToText.cancel();
+    super.dispose();
+  }
 
   void saveAndClose() {
     if (_titleController.text.trim().isNotEmpty &&
         _descriptionController.text.trim().isNotEmpty) {
-      NoteModel note = NoteModel(
+      NoteModel newNote = NoteModel(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         dateTime: DateTime.now(),
       );
-      widget.homeBloc.add(HomeAddNoteSavedEvent(note: note));
+      if (widget.isUpdateScreen) {
+        NoteModel oldNote =
+            ModalRoute.of(context)?.settings.arguments as NoteModel;
+        newNote.isFavourite = oldNote.isFavourite;
+        widget.homeBloc.add(
+          HomeNoteUpdateEvent(
+            oldNote: oldNote,
+            newNote: newNote,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        widget.homeBloc.add(HomeAddNoteSavedEvent(note: newNote));
+      }
       Navigator.pop(context);
+      SnackBarWidget(
+        context: context,
+        label:
+            'Note ${widget.isUpdateScreen ? "updated" : "added"} successfully',
+        color: Colors.grey[200]!,
+      ).show();
     }
   }
 
@@ -109,92 +131,88 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
           ),
         ],
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      customText(
-                        label: 'Title',
-                        color: Colors.black,
-                        size: 20,
-                      ),
-                      const SizedBox(height: 20),
-                      customContainer(
-                        child: TextField(
-                          style: Theme.of(context).textTheme.labelLarge,
-                          controller: _titleController,
-                          decoration: InputDecoration(
-                            hintText: 'Add a new title',
-                            focusColor: Colors.white,
-                            border: _border,
-                            focusedBorder: _border,
-                            enabledBorder: _border,
-                          ),
-                          onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                        ),
-                      ),
-                      const SizedBox(height: 50),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          customText(
-                            label: 'Description',
-                            color: Colors.black,
-                            size: 20,
-                          ),
-                          Column(
-                            children: [
-                              Switch(
-                                activeColor: AppColors.primary,
-                                inactiveTrackColor: AppColors.background,
-                                activeTrackColor: AppColors.iconBackground,
-                                trackOutlineColor:
-                                    MaterialStatePropertyAll(AppColors.primary),
-                                value: _enableTyping,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _enableTyping = value;
-                                  });
-                                },
-                              ),
-                              customText(
-                                label: 'Enable Typing',
-                                color: AppColors.subTitle,
-                                size: 12,
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      customContainer(
-                        child: TextField(
-                          style: Theme.of(context).textTheme.labelLarge,
-                          controller: _descriptionController,
-                          decoration: InputDecoration(
-                            hintText: 'Add Description by (voice/type)',
-                            focusColor: Colors.white,
-                            border: _border,
-                            focusedBorder: _border,
-                            enabledBorder: _border,
-                          ),
-                          maxLines: 10,
-                          onTapOutside: (_) => FocusScope.of(context).unfocus(),
-                          readOnly: !_enableTyping,
-                        ),
-                      ),
-                    ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                customText(
+                  label: 'Title',
+                  color: Colors.black,
+                  size: 20,
+                ),
+                const SizedBox(height: 20),
+                customContainer(
+                  child: TextField(
+                    style: Theme.of(context).textTheme.labelLarge,
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      hintText: 'Add a new title',
+                      focusColor: Colors.white,
+                      border: _border,
+                      focusedBorder: _border,
+                      enabledBorder: _border,
+                    ),
+                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
                   ),
                 ),
-              ),
+                const SizedBox(height: 50),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    customText(
+                      label: 'Description',
+                      color: Colors.black,
+                      size: 20,
+                    ),
+                    Column(
+                      children: [
+                        Switch(
+                          activeColor: AppColors.primary,
+                          inactiveTrackColor: AppColors.background,
+                          activeTrackColor: AppColors.iconBackground,
+                          trackOutlineColor:
+                              MaterialStatePropertyAll(AppColors.primary),
+                          value: _enableTyping,
+                          onChanged: (value) {
+                            setState(() {
+                              _enableTyping = value;
+                            });
+                          },
+                        ),
+                        customText(
+                          label: 'Enable Typing',
+                          color: AppColors.subTitle,
+                          size: 12,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                customContainer(
+                  child: TextField(
+                    style: Theme.of(context).textTheme.labelLarge,
+                    controller: _descriptionController,
+                    decoration: InputDecoration(
+                      hintText: 'Add Description by (voice/type)',
+                      focusColor: Colors.white,
+                      border: _border,
+                      focusedBorder: _border,
+                      enabledBorder: _border,
+                    ),
+                    maxLines: 10,
+                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                    readOnly: !_enableTyping,
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: (isFocus && !_enableTyping)
           ? AvatarGlow(

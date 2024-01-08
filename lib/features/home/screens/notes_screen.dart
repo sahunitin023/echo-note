@@ -30,7 +30,7 @@ class _NotesScreenState extends State<NotesScreen> {
         Padding(
           padding: const EdgeInsets.all(30),
           child: Card(
-            elevation: 10,
+            elevation: 5,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50),
             ),
@@ -41,6 +41,7 @@ class _NotesScreenState extends State<NotesScreen> {
               ),
               child: TextField(
                 style: Theme.of(context).textTheme.labelMedium,
+                onTapOutside: (_) => FocusScope.of(context).unfocus(),
                 decoration: InputDecoration(
                   labelText: 'Search',
                   prefixIcon: Image.asset(

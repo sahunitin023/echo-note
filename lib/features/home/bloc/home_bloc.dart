@@ -80,5 +80,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(HomeErrorState());
       }
     });
+
+    //Update the Note
+    on<HomeNoteUpdateEvent>((event, emit) {
+      try {
+        var notes = box.get('notes', defaultValue: []);
+        notes.removeWhere((note) => note == event.oldNote);
+        notes.add(event.newNote);
+        box.put('notes', notes);
+        emit(HomeSuccessState(notes: notes.cast<NoteModel>()));
+      } catch (e) {
+        print(e);
+        emit(HomeErrorState());
+      }
+    });
   }
 }

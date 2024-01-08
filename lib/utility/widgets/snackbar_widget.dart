@@ -21,7 +21,7 @@ class SnackBarWidget {
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 3),
+        duration: const Duration(seconds: 2, milliseconds: 500),
         action: SnackBarAction(
           label: 'Okay!',
           textColor: AppColors.primary,

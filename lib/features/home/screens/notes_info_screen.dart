@@ -1,4 +1,5 @@
 import 'package:echo_note/features/home/bloc/home_bloc.dart';
+import 'package:echo_note/features/home/screens/text_to_speech_screen.dart';
 import 'package:echo_note/models/note_model.dart';
 import 'package:echo_note/utility/constants.dart';
 import 'package:echo_note/utility/widgets/snackbar_widget.dart';
@@ -68,13 +69,15 @@ class NotesInfoScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         elevation: 10,
         onPressed: () {
-          // Navigator.of(context).push(
-          //   MaterialPageRoute(
-          //     builder: (context) => TextToSpeechScreen(
-          //       homeBloc: homeBloc,
-          //     ),
-          //   ),
-          // );
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              settings: RouteSettings(arguments: note),
+              builder: (context) => TextToSpeechScreen(
+                isUpdateScreen: true,
+                homeBloc: homeBloc,
+              ),
+            ),
+          );
         },
         splashColor: AppColors.subTitle,
         backgroundColor: AppColors.iconBackground,
