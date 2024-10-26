@@ -32,7 +32,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             .toList();
         emit(HomeSuccessState(notes: loadedNotes.cast<NoteModel>()));
       } catch (e) {
-        print(e);
+        // print(e);
         emit(HomeErrorState());
       }
       // box.close();
@@ -76,7 +76,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         box.put('notes', notes);
         emit(HomeSuccessState(notes: notes.cast<NoteModel>()));
       } catch (e) {
-        print(e);
+        // print(e);
         emit(HomeErrorState());
       }
     });
@@ -90,7 +90,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         box.put('notes', notes);
         emit(HomeSuccessState(notes: notes.cast<NoteModel>()));
       } catch (e) {
-        print(e);
+        // print(e);
         emit(HomeErrorState());
       }
     });

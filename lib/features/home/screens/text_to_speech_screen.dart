@@ -21,26 +21,61 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   final SpeechToText _speechToText = SpeechToText();
+  bool available = false;
   bool _speechEnabled = false;
   bool _enableTyping = false;
   bool _didChange = true;
+  String lastWords = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  /// This has to happen only once per app
+  void _initSpeech() async {
+    bool isInitiated = await _speechToText.initialize();
+    setState(() {
+      available = isInitiated;
+    });
+  }
 
   void _startListening() async {
+    final options = SpeechListenOptions(
+      cancelOnError: true,
+      autoPunctuation: true,
+      // partialResults: true,
+      enableHapticFeedback: true,
+      // listenMode: ListenMode.dictation,
+    );
     if (!_speechEnabled) {
-      bool available = await _speechToText.initialize();
       if (available) {
         setState(() {
           _speechEnabled = true;
-          _speechToText.listen(
-            partialResults: true,
-            cancelOnError: true,
-            onResult: (result) {
-              setState(() {
-                _descriptionController.text = result.recognizedWords;
-              });
-            },
-          );
         });
+        _speechToText.listen(
+          listenOptions: options,
+          onResult: (result) {
+            setState(() {
+              _descriptionController.text = result.recognizedWords;
+            });
+            if (result.finalResult) {
+              _stopListening();
+            }
+          },
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Please Allow access to Microphone!!'),
+            backgroundColor: AppColors.favourite,
+            action: SnackBarAction(
+              label: 'Allow',
+              onPressed: () => _initSpeech(),
+            ),
+          ),
+        );
       }
     }
   }
@@ -227,8 +262,8 @@ class _TextToSpeechScreenState extends State<TextToSpeechScreen> {
                 shape: const CircleBorder(),
                 color: Colors.transparent,
                 child: GestureDetector(
-                  onTapDown: (_) => _startListening(),
-                  onTapUp: (_) => _stopListening(),
+                  onTap: () =>
+                      _speechEnabled ? _stopListening() : _startListening(),
                   child: CircleAvatar(
                     radius: 35,
                     backgroundColor: Colors.grey[200],
